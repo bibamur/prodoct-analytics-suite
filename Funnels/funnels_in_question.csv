@@ -1,0 +1,34 @@
+index,funnel_id,category,task_id,order,is_last,is_course,action_type,label
+0,Course 33 Funnel,Course 33,1000870,1,False,True,started,Task 1 is started
+1,Course 33 Funnel,Course 33,1000871,2,False,True,started,Task 2 is started
+2,Course 33 Funnel,Course 33,1000872,3,False,True,started,Task 3 is started
+3,Course 33 Funnel,Course 33,1000873,4,False,True,started,Task 4 is started
+4,Course 33 Funnel,Course 33,1000874,5,False,True,started,Task 5 is started
+5,Course 33 Funnel,Course 33,1000875,6,False,True,started,Task 6 is started
+6,Course 33 Funnel,Course 33,1000876,7,False,True,started,Task 7 is started
+7,Course 33 Funnel,Course 33,1000877,8,False,True,started,Task 8 is started
+8,Course 33 Funnel,Course 33,1000878,9,False,True,started,Task 9 is started
+9,Course 33 Funnel,Course 33,1000879,10,False,True,started,Task 10 is started
+10,Course 33 Funnel,Course 33,1000880,11,False,True,started,Task 11 is started
+11,Course 33 Funnel,Course 33,1000881,12,False,True,started,Task 12 is started
+12,Course 33 Funnel,Course 33,1000882,13,False,True,started,Task 13 is started
+13,Course 33 Funnel,Course 33,1000914,14,False,True,started,Task 14 is started
+14,Course 33 Funnel,Course 33,1000913,15,False,True,started,Task 15 is started
+15,Course 33 Funnel,Course 33,1000916,16,False,True,started,Task 16 is started
+16,Course 33 Funnel,Course 33,1000915,17,False,True,started,Task 17 is started
+17,Course 33 Funnel,Course 33,1000917,18,False,True,started,Task 18 is started
+18,Course 33 Funnel,Course 33,1000918,19,False,True,started,Task 19 is started
+19,Course 33 Funnel,Course 33,1000919,20,False,True,started,Task 20 is started
+20,Course 33 Funnel,Course 33,1000920,21,True,True,started,Task 21 is started
+21,Course 69 Funnel,Course 69,1000344,1,False,True,started,Task 1 is started
+22,Course 69 Funnel,Course 69,1000345,2,False,True,started,Task 2 is started
+23,Course 69 Funnel,Course 69,1000346,3,False,True,started,Task 3 is started
+24,Course 69 Funnel,Course 69,1000347,4,False,True,started,Task 4 is started
+25,Course 69 Funnel,Course 69,1000348,5,False,True,started,Task 5 is started
+26,Course 69 Funnel,Course 69,1000349,6,False,True,started,Task 6 is started
+27,Course 69 Funnel,Course 69,1000350,7,False,True,started,Task 7 is started
+28,Course 69 Funnel,Course 69,1000351,8,False,True,started,Task 8 is started
+29,Course 69 Funnel,Course 69,1000352,9,False,True,started,Task 9 is started
+30,Course 69 Funnel,Course 69,1000353,10,True,True,started,Task 10 is started
+
+
