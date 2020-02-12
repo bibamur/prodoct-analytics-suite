@@ -107,7 +107,7 @@ plt.legend(handles=[blue_line], fontsize=25)
 plt.xlabel('Retention Day N',fontsize=35)
 plt.ylabel('Retention %',fontsize=35)
 
-    
+plt.grid()    
 plt.show()
 
 

@@ -78,7 +78,7 @@ def plot_histogram(all_user_event_counts, title, x_label, y_label):
     plt.xlim(min(bins), max(bins))
     plt.grid(axis='y', alpha=0.75)
     plt.xlabel(x_label,fontsize=35)
-    plt.xticks(np.arange(0,bins.max(),2))
+    plt.xticks(np.arange(0,bins.max(),5))
     
     plt.xticks(fontsize=25)
     plt.yticks(fontsize=25)
@@ -125,8 +125,12 @@ event_1 = {
         }
             
 user_events_df = all_user_events_df.loc[(all_user_events_df[list(event_1)] == pd.Series(event_1)).all(axis = 1)]
+
 all_user_event_counts_social = calculate_first_period_user_event_counts(user_events_df)
 #all_user_event_counts_social = calculate_all_user_event_counts(user_events_df)
+
+
+
 plot_histogram(all_user_event_counts_social, 'Number of Users who have completed certain number of Social tasks', 'Number of completed tasks','Frequency')
 
 
@@ -138,9 +142,13 @@ event_2 = {
         }
 
 user_events_df = all_user_events_df.loc[(all_user_events_df[list(event_2)] == pd.Series(event_2)).all(axis = 1)]
+
 all_user_event_counts_course = calculate_first_period_user_event_counts(user_events_df)
 #all_user_event_counts_course = calculate_all_user_event_counts(user_events_df)
+
 all_user_event_counts_course[all_user_event_counts_course>200] = 200 # outliers with more than 200 tasks will be marked as they have 200 tasks (to reduce x-axis) 
+
+
 plot_histogram(all_user_event_counts_course, 'Number of Users who have completed certain number of Course tasks', 'Number of completed tasks','Frequency')
 
 
