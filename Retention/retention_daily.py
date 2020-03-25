@@ -119,4 +119,4 @@ plt.show()
 # e.g. user_id | 0,1,5,7,10,30, 35, remove dupes
 # merge into one big list, calculate value counts: 0 1000, 1 900, 2 800 ...
 # graph daily retention
-
+#

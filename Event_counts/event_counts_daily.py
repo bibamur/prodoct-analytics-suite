@@ -94,3 +94,4 @@ period_end_date = '2019-10-14'
 event_counts_by_date_df = calculate_total_events_and_unique_users(period_start_date, period_end_date, events_in_question )
 plot_event_counts(event_counts_by_date_df, 'Total') 
 plot_event_counts(event_counts_by_date_df, 'Unique users')
+#

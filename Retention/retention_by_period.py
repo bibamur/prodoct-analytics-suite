@@ -80,3 +80,6 @@ for index,row in retention_graph.iterrows():
     plt.text(row['Retention Period'], row['Ret %'], round(row['Ret %']*100,2), fontsize=25)
 
 plt.show()
+
+
+#

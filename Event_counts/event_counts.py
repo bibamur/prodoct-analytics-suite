@@ -97,3 +97,4 @@ events_in_question = {
 events_counts_by_period_df = caculate_event_counts_by_period(events_in_question)
 plot_event_counts(events_counts_by_period_df, 'Unique users')
 plot_event_counts(events_counts_by_period_df, 'Total')
+#

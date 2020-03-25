@@ -30,5 +30,3 @@ index,funnel_id,category,task_id,order,is_last,is_course,action_type,label
 28,Course 69 Funnel,Course 69,1000351,8,False,True,started,Task 8 is started
 29,Course 69 Funnel,Course 69,1000352,9,False,True,started,Task 9 is started
 30,Course 69 Funnel,Course 69,1000353,10,True,True,started,Task 10 is started
-
-

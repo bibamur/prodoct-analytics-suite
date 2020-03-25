@@ -181,3 +181,4 @@ cohort_2_active = all_user_event_counts_course[all_user_event_counts_course > 4]
 cohort_1_not_active.to_csv('not_active_users_course.csv', header = False)
 cohort_2_active.to_csv('active_users_course.csv', header = False)
 """
+#
