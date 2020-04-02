@@ -82,7 +82,8 @@ def user_funnel_events(user_df: pd.DataFrame, funnel: []) -> []:
     return events_in_funnel
 
 
-with open('..\\data\\events_metadata.json', 'r') as f:
+event_metadata_path = '..\\data\\events_metadata.json'
+with open(event_metadata_path, 'r') as f:
     events_metadata = json.load(f)
 
 # Setup strings from events metadata
@@ -93,10 +94,12 @@ events_data_path = events_metadata['events_data_path']
 # Load events data
 all_user_events_df = pd.read_csv(events_data_path)
 
-
-# Set string constants needed to parse the funnels_config.json
+# Load  funnels_config.json and set string constants needed to parse it
 funnels_config_path = '..\\funnels\\funnels_config.json'
-funnel_id_str = 'funnel_id'
+with open(funnels_config_path, 'r') as f:
+    funnels_config = json.load(f)
+
+funnel_name_str = 'funnel_id'
 funnel_events_str = 'funnel_events'
 event_name_str = 'name'
 event_conditions_str = 'conditions'
@@ -104,20 +107,18 @@ order_str = 'order'
 funnel_start_date_str = 'start_date'
 funnel_end_date_str = 'end_date'
 
-with open(funnels_config_path, 'r') as f:
-    funnels_config = json.load(f)
-
-# Get funnels
-start_date = funnels_config[funnel_start_date_str]
-end_date = funnels_config[funnel_end_date_str]
 
 # Filter out all events before period start date, set index to user_id to increase speed of further processing
+start_date = funnels_config[funnel_start_date_str]
+end_date = funnels_config[funnel_end_date_str]
 all_user_events_df = all_user_events_df.loc[
     (all_user_events_df[timestamp_column] >= start_date)  # If all events after period start are needed
     # & (events_df[time_stamp_key] < time_period_end_date)  # If only events within period are needed
 ]
 
-funnel_events = funnels_config[funnel_events_str]
+
+funnel_events = funnels_config[funnel_events_str]  # Get funnel events from config
+
 # Create filter and filter all_user_events_df by funnel_events
 funnel_filter = pd.Series(False, index=all_user_events_df.index)
 for event in funnel_events:
@@ -128,8 +129,8 @@ for event in funnel_events:
 filtered_events_df = all_user_events_df[funnel_filter]
 filtered_events_df.reset_index(inplace=True, drop=False)
 
-funnels_dict = {}
-funnel_id = funnels_config[funnel_id_str]
+
+funnel_name = funnels_config[funnel_name_str]
 event_counts = funnel_event_counts(funnel_events, start_date, end_date, filtered_events_df)
 
 # plot funnel
@@ -139,9 +140,10 @@ w = list(reversed(list(event_counts.values())))
 ax.barh(y=y, width=w, color='blue')
 plt.rcParams.update({'font.size': 22})
 for i, v in enumerate(w):
-        ax.text(v + 3, i - 0.25, str(v), color='blue', fontweight='bold')
+    ax.text(v + 3, i - 0.25, str(v), color='blue', fontweight='bold')
 
 ax.grid(axis='x', alpha=0.75)
 ax.tick_params(axis="x", labelsize=25)
-ax.tick_params(axis="y", labelsize=22)     
+ax.tick_params(axis="y", labelsize=22)
+ax.set_title(funnel_name)
 plt.show()
