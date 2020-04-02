@@ -54,7 +54,7 @@ unique, counts = np.unique(retention_list, return_counts=True)
 
 
 retention_graph = pd.DataFrame(
-        {'Retention Period': unique,
+        {'retention Period': unique,
          'Number of users':counts,
          'Ret %': counts/counts.max()
          })
@@ -65,19 +65,19 @@ retention_graph=retention_graph.sort_index().copy()
 print(retention_graph)
 
 
-retention_graph.plot(kind = 'line',x='Retention Period', y ='Ret %', figsize=(15,10), marker = 'o')
-plt.title('Retention by time period', fontsize = 35)
+retention_graph.plot(kind = 'line',x='retention Period', y ='Ret %', figsize=(15,10), marker = 'o')
+plt.title('retention by time period', fontsize = 35)
 
 plt.rcParams.update({'font.size': 25})
 plt.ylim([0, 1])
-plt.xlim([0, retention_graph['Retention Period'].max()])
-plt.xticks(np.arange(0, retention_graph['Retention Period'].max()+1), fontsize=20)
+plt.xlim([0, retention_graph['retention Period'].max()])
+plt.xticks(np.arange(0, retention_graph['retention Period'].max()+1), fontsize=20)
 plt.yticks(fontsize=20)
 plt.grid()
 
 
 for index,row in retention_graph.iterrows():
-    plt.text(row['Retention Period'], row['Ret %'], round(row['Ret %']*100,2), fontsize=25)
+    plt.text(row['retention Period'], row['Ret %'], round(row['Ret %']*100,2), fontsize=25)
 
 plt.show()
 

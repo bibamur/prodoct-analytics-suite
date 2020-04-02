@@ -1,0 +1,24 @@
+{
+  "_description": "Definitions of events to count.",
+  "events": [
+    {
+      "name": "Task Started",
+      "conditions": {
+        "action_type": "started"
+      }
+    },
+    {
+      "name": "Task Ended",
+      "conditions": {
+        "action_type": "done"
+      }
+    },
+    {
+      "name": "Course Task Skipped",
+      "conditions": {
+        "action_type": "skipped",
+        "is_course": true
+      }
+    }
+  ]
+}

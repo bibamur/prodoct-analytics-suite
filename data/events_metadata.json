@@ -1,0 +1,6 @@
+{
+  "column_names": ["date", "user_id", "course_name", "task_id", "action_type", "order", "is_last", "is_course"],
+  "events_data_path": "..\\data\\user_events_df.csv",
+  "timestamp_column":"date",
+  "user_id_column": "user_id"
+}

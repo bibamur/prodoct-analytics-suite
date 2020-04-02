@@ -100,12 +100,12 @@ ax.yaxis.set_major_locator(plt.MaxNLocator(10))
 
 plt.ylim([0, 1])
 plt.xlim([0, daily_retention.index.max()])
-plt.title('Daily Retention graph', fontsize = 35)
+plt.title('Daily retention graph', fontsize = 35)
 blue_line = mlines.Line2D([], [], color='blue',
                           label='Total users count: ' + str(len(users)) +'\nStart date: ' + str(start_date) + '\nEnd date: '+str(end_date))
 plt.legend(handles=[blue_line], fontsize=25)
-plt.xlabel('Retention Day N',fontsize=35)
-plt.ylabel('Retention %',fontsize=35)
+plt.xlabel('retention Day N',fontsize=35)
+plt.ylabel('retention %',fontsize=35)
 
 plt.grid()    
 plt.show()

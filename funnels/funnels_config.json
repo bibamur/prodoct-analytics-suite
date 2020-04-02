@@ -1,0 +1,78 @@
+{
+  "_description": "This configuration specifies funnel to apply to events data.",
+  "start_date": "2017-08-24",
+  "end_date": "2020-01-06",
+  "funnel_id": "Course 69 Funnel",
+  "funnel_events": [
+    {
+      "name": "Task 1 is started",
+      "conditions": {
+        "action_type": "started",
+        "task_id": 1000344
+      }
+    },
+    {
+      "name": "Task 2 is started",
+      "conditions": {
+        "action_type": "started",
+        "task_id": 1000345
+      }
+    },
+    {
+      "name": "Task 3 is started",
+      "conditions": {
+        "action_type": "started",
+        "task_id": 1000346
+      }
+    },
+    {
+      "name": "Task 4 is started",
+      "conditions": {
+        "action_type": "started",
+        "task_id": 1000347
+      }
+    },
+    {
+      "name": "Task 5 is started",
+      "conditions": {
+        "action_type": "started",
+        "task_id": 1000348
+      }
+    },
+    {
+      "name": "Task 6 is started",
+      "conditions": {
+        "action_type": "started",
+        "task_id": 1000349
+      }
+    },
+    {
+      "name": "Task 7 is started",
+      "conditions": {
+        "action_type": "started",
+        "task_id": 1000350
+      }
+    },
+    {
+      "name": "Task 8 is started",
+      "conditions": {
+        "action_type": "started",
+        "task_id": 1000351
+      }
+    },
+    {
+      "name": "Task 9 is started",
+      "conditions": {
+        "action_type": "started",
+        "task_id": 1000352
+      }
+    },
+    {
+      "name": "Task 10 is started",
+      "conditions": {
+        "action_type": "started",
+        "task_id": 1000353
+      }
+    }
+  ]
+}

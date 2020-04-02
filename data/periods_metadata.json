@@ -1,0 +1,6 @@
+{
+  "periods_data_path": "..\\data\\time_periods_df.csv",
+  "period_id": "time_period_id",
+  "period_start": "start_date",
+  "period_end": "end_date"
+}
