@@ -118,13 +118,15 @@ def plot_event_counts(counts_df: pd.DataFrame, ax: plt.Axes, title: str):
     event_counts_df = pd.DataFrame()
     for event_type in event_types:
         event_counts_df = counts_df.loc[counts_df[event_type_str] == event_type.name]
-        ax.plot(event_counts_df[period_id_str].values, event_counts_df[user_id_column].values,
+        x_coord = event_counts_df[period_id_str].values
+        y_coord = event_counts_df[user_id_column].values
+        ax.plot(x_coord, y_coord,
                 marker='o', label=event_type.name)
 
-        for period, counts in zip(event_counts_df[period_id_str].values, event_counts_df[user_id_column].values):
-            ax.annotate(counts, (period, counts))  # annotates plot with value near each data point
+        for x, y in zip(x_coord, y_coord):
+            ax.annotate(y, (x, y))  # annotates plot with value near each data point
 
-    ax.set_xticks(event_counts_df[period_id_str].unique())
+    ax.set_xticks(x_coord)
     ax.set_ylabel(title)
     ax.set_title(title)
     ax.legend()
@@ -137,4 +139,4 @@ plt.rcParams.update({'font.size': 22})
 fig, axs = plt.subplots(2)
 plot_event_counts(total_df, axs[0], 'Total number of events.')
 plot_event_counts(unique_df, axs[1], 'Total number of unique users.')
-plt.show()
+#plt.show()
