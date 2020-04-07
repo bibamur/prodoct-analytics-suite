@@ -45,7 +45,6 @@ time_periods = pd.read_csv(periods_data_path, index_col=0)
 events_data[period_id_str] = 0
 
 # Set string constant to use in the script
-counts_str = 'counts'
 event_type_str = 'event_type'
 
 
@@ -65,15 +64,15 @@ for config_event in config_events:
 
 # Filter data by event types
 def filter_by_event_type(data: pd.DataFrame, types: List[EventType]):
-    filter = pd.Series(False, index=data.index)
-    data[event_type_str] = 0
+    data_filter = pd.Series(False, index=data.index)
+    data[event_type_str] = ''
     for event_type in types:
         columns = list(event_type.conditions.keys())
         conditions = pd.Series(event_type.conditions)
         event_filter = (data[columns] == conditions).all(axis=1)
-        data.loc[event_filter, event_type_str] = event_type.name # add event name to DataFrame
-        filter |= event_filter
-    return data[filter]
+        data.loc[event_filter, event_type_str] = event_type.name  # add event name to DataFrame
+        data_filter |= event_filter
+    return data[data_filter]
 
 
 events_data = filter_by_event_type(events_data, event_types)
@@ -119,7 +118,8 @@ def plot_event_counts(counts_df: pd.DataFrame, ax: plt.Axes, title: str):
     event_counts_df = pd.DataFrame()
     for event_type in event_types:
         event_counts_df = counts_df.loc[counts_df[event_type_str] == event_type.name]
-        ax.plot(event_counts_df[period_id_str].values, event_counts_df[user_id_column].values, marker='o', label=event_type.name)
+        ax.plot(event_counts_df[period_id_str].values, event_counts_df[user_id_column].values,
+                marker='o', label=event_type.name)
 
         for period, counts in zip(event_counts_df[period_id_str].values, event_counts_df[user_id_column].values):
             ax.annotate(counts, (period, counts))  # annotates plot with value near each data point
