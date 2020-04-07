@@ -2,9 +2,10 @@
   "_description": "Definitions of events to count.",
   "events": [
     {
-      "name": "Task Started",
+      "name": "Course Task Started",
       "conditions": {
-        "action_type": "started"
+        "action_type": "started",
+        "is_course": true
       }
     },
     {
