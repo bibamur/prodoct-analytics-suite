@@ -1,7 +1,7 @@
 # Basic tools for Product Analytics 
 
-This repository contains basic tools for product analytics and open for everyone who would like to use it.
-The approach to the analysis is based on the model of user events: each event is a particular action performed by user in the product.
+This repository contains basic tools for product analytics and is open for everyone who would like to use it.
+The approach to the analysis is based on the model of user events: each event is a particular action performed by the user in the product.
 
 [You can see the detailed description of the tools in the project's wiki.](https://github.com/bibamur/product-analytics-suite/wiki) 
 
@@ -19,14 +19,14 @@ The approach to the analysis is based on the model of user events: each event is
 
 # How to execute:
 
-#### Prepare data files.
+#### Step 1: Prepare data files.
 
 - File with events
 - File with time periods - needed for Counts by period and Retention by period calculation.
 
 *Note*: Period ID is mandatory column in time periods file, **must be ascending integer for correct retention by period calculation**
 
-#### Prepare metadata files - should have exact same structure as provided in the project.
+#### Step 2: Prepare metadata files - should have the exact same structure as provided in the project.
 
 
 1. Events metadata file ('../data/events_metadata.json') should contain following fields:
@@ -35,17 +35,16 @@ The approach to the analysis is based on the model of user events: each event is
     - user_id_column:name of the column containing user_id  (mandatory column in events file)
 
 
-2. Time periods metadata file ('../data/periods_metadata.json') should have same ecact structure as in the project.
+2. Time periods metadata file ('../data/periods_metadata.json') should contain following fields:
     - periods_data_path: path to time periods data
     - period_id: name of the column with period ID in time periods data (mandatory column in time periods file, **must be ascending integer for correct retention by period calculation**)
     - period_start: name of the column with period start date in time periods data (mandatory column in time periods file)
     - period_end: name of the column with period end date in time periods data (mandatory column in time periods file)
 
 
-#### Prepare configuration files for particular scripts.
+#### Step 3: Prepare configuration files for particular scripts.
 
-
-1. Histogram config ('../hist/hist_config.json') contains list of events to calculate histogram for. Each event is described by:
+1. Histogram config ('../hist/hist_config.json') contains a list of events to calculate histogram for. Each event is described by:
     - name: event name
     - conditions: list of conditions that should be applied to events to get necessary events. Each condition consists of events file column name and value.
 
@@ -59,8 +58,8 @@ The approach to the analysis is based on the model of user events: each event is
     - start_date: start date of the period of the first user event for daily retention script (if user performed her first event during start day, this day will be counted as retention day 0)
     - end_date: end date of the period of the first user event  for daily retention script (if user performed her first event during end day, this day will be counted as retention day 0)
 
-4. Funnels config ('../funnels/funnels_config.json') contains list of funnel events. 
-    - **Order is important in this config file, as it defines oreder of events in funnel!**
+4. Funnels config ('../funnels/funnels_config.json') contains a list of funnel events. 
+    - **Order is important in this config file, as it defines order of events in the funnel!**
     - Each funnel event is defined with event name and conditions
 
 
