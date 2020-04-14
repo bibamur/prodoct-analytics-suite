@@ -6,6 +6,7 @@ The approach to the analysis is based on the model of user events: each event is
 [You can see the detailed description of the tools in the project's wiki.](https://github.com/bibamur/product-analytics-suite/wiki) 
 
 #### Following tools are included in this repository:
+
 1. Histogram ('../hist/hist.py')
 2. Event counts - total and unique 
     - Daily counts ('../event_counts/event_counts_daily.py')
@@ -19,11 +20,11 @@ The approach to the analysis is based on the model of user events: each event is
 # How to execute:
 
 #### Prepare data files.
-Necessary data files:
-    - File with events
-    - File with time periods - needed for Counts by period and Retention by period calculation.  
 
-*Note*: Period ID is mandatory column in time periods file, **must be ascending integrer for correct retention by period calculation**
+- File with events
+- File with time periods - needed for Counts by period and Retention by period calculation.
+
+*Note*: Period ID is mandatory column in time periods file, **must be ascending integer for correct retention by period calculation**
 
 #### Prepare metadata files - should have exact same structure as provided in the project.
 
@@ -36,7 +37,7 @@ Necessary data files:
 
 2. Time periods metadata file ('../data/periods_metadata.json') should have same ecact structure as in the project.
     - periods_data_path: path to time periods data
-    - period_id: name of the column with period ID in time periods data (mandatory column in time periods file, **must be ascending integrer for correct retention by period calculation**)
+    - period_id: name of the column with period ID in time periods data (mandatory column in time periods file, **must be ascending integer for correct retention by period calculation**)
     - period_start: name of the column with period start date in time periods data (mandatory column in time periods file)
     - period_end: name of the column with period end date in time periods data (mandatory column in time periods file)
 
