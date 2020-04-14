@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from dataclasses import dataclass
 from typing import List, Any, Dict
 
 import pandas as pd
@@ -9,6 +10,35 @@ from user_events import UserEvents
 import user_events as uev
 from event_type import EventType
 import event_type as et
+
+
+@dataclass(frozen=True)
+class FunnelEventTypes:
+    funnel_event_types: List[EventType]
+    start_date: str
+    end_date: str
+    funnel_name: str
+
+
+def init_funnel_event_types_from_config(config_path: str) -> FunnelEventTypes:
+    """
+    Args:
+        config_path - path to funnels config
+    Returns:
+          object of FunnelEventTypes containing the list of EventType in funnel and metadata attributes
+    """
+
+    with open(os.path.abspath(config_path), 'r') as f:
+        funnels_config = json.load(f)
+    funnel_name = funnels_config['funnel_id']
+    start_date = funnels_config['start_date']
+    end_date = funnels_config['end_date']
+    config_funnel_events = funnels_config['funnel_events']
+    funnel_event_types = []
+    for event_type in config_funnel_events:
+        funnel_event_types.append(EventType(event_type['name'], event_type['conditions']))
+
+    return FunnelEventTypes(funnel_event_types, start_date, end_date, funnel_name)
 
 
 def users_with_first_event(first_event: EventType, start: str, end: str, user_events: UserEvents) -> List:
@@ -26,7 +56,8 @@ def users_with_first_event(first_event: EventType, start: str, end: str, user_ev
     user_id_column = user_events.user_id_column
 
     # Get all first funnel events in events_df
-    first_events = uev.filter_by_event_type(user_events, first_event)
+    user_events.filter_by_event_type(first_event)
+    first_events = user_events.data
 
     # If no first events found - return empty dict
     users = []
@@ -80,7 +111,7 @@ def user_funnel_events(user_df: pd.DataFrame, funnel: List[EventType]) -> []:
     Returns list of all user's funnel events up to the last reached.
     """
 
-    event_type_str = et.event_type_str
+    event_type_str = et.StringConstants.event_type.value
     events_in_funnel = []
     user_df.reset_index(inplace=True, drop=True)
     for funnel_event in funnel:
@@ -89,7 +120,7 @@ def user_funnel_events(user_df: pd.DataFrame, funnel: List[EventType]) -> []:
             event_index = funnel_df.index[0]
         else:
             return events_in_funnel
-        user_df = user_df.loc[event_index+1:]
+        user_df = user_df.loc[event_index + 1:]
         events_in_funnel.append(funnel_event.name)
 
     return events_in_funnel
@@ -109,29 +140,11 @@ def plot_funnel(ax: plt.Axes, event_counts: Dict, title: str):
     ax.set_title(title)
 
 
-class FunnelEventTypes:
-    funnel_event_types: List[EventType]
-    start_date: str
-    end_date: str
-    funnel_name: str
-
-    def __init__(self, config_path: str):
-        with open(os.path.abspath(config_path), 'r') as f:
-            funnels_config = json.load(f)
-
-        self.funnel_name = funnels_config['funnel_id']
-        self.start_date = funnels_config['start_date']
-        self.end_date = funnels_config['end_date']
-        config_funnel_events = funnels_config['funnel_events']
-        self.funnel_event_types = []
-        for event_type in config_funnel_events:
-            self.funnel_event_types.append(EventType(event_type['name'], event_type['conditions']))
-
-
 if __name__ == '__main__':
-    events = UserEvents('../data/events_metadata.json', '../data/periods_metadata.json')
-    events.load_user_events_data()
-    funnel = FunnelEventTypes('../funnels/funnels_config.json')
+    events = uev.UserEvents.init_from_files(events_metadata_path='../data/events_metadata.json',
+                                            periods_metadata_path='../data/periods_metadata.json')
+
+    funnel = init_funnel_event_types_from_config('../funnels/funnels_config.json')
 
     # Filter out all events before period start date, set index to user_id to increase speed of further processing
     events.data = events.data.loc[
@@ -141,11 +154,10 @@ if __name__ == '__main__':
     events.data.set_index(events.user_id_column, inplace=True, drop=False)
 
     # Filter by funnel Event Types
-    events.data = uev.filter_by_event_type(events, funnel.funnel_event_types, add_event_type_name=True)
+    events.filter_by_event_type(funnel.funnel_event_types, add_event_type_name=True)
 
     users_in_question = users_with_first_event(funnel.funnel_event_types, funnel.start_date, funnel.end_date, events)
     event_counts = funnel_event_counts(funnel.funnel_event_types, users_in_question, events)
-
 
     fig, ax = plt.subplots()
     plot_funnel(ax, event_counts, funnel.funnel_name)

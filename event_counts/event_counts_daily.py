@@ -1,97 +1,120 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Dec 22 15:49:50 2019
-
-@author: bibam
-"""
-
+from typing import Dict, List
 import pandas as pd
-import numpy as np
 import datetime
-import matplotlib 
 import matplotlib.pyplot as plt
 from datetime import datetime, date, timedelta
+from user_events import UserEvents
+import user_events as uev
+from event_type import EventType
+import event_type as et
+import os
+import json
+from pandas.plotting import register_matplotlib_converters
+
+# Set constants to use in the script
+event_type_str = et.StringConstants.event_type.value
 
 
 
+def counts_daily(user_events: UserEvents, types: List[EventType]) -> pd.DataFrame:
+    """
+    Calculates total number of events by event type by day
+    Args:
+        User Events instance
+        list of event types
+    Returns:
+         DataFrame with total event counts
+    """
+    data = user_events.data
+    timestamp_col = user_events.timestamp_column
+    user_id = user_events.user_id_column
+    tasks_counts = data.groupby([timestamp_col, event_type_str])[user_id].agg('count')
+    tasks_counts = tasks_counts.reset_index()
+    return tasks_counts
 
-all_user_events_df = pd.read_csv('..\\data\\user_events_df.csv')
-all_user_events_df['date'] = all_user_events_df['date'].astype(str).str[:-6]
-all_user_events_df['date'] = pd.to_datetime(all_user_events_df['date'])
-all_user_events_df.set_index('date', inplace = True)
+
+def uniques_daily(user_events: UserEvents, types: List[EventType]) -> pd.DataFrame:
+    """
+    Calculates number of unique users who performed the event by event type by date
+    Args:
+        User Events instance
+        list of event types
+    Returns:
+         DataFrame with unique users counts
+    """
+    data = user_events.data
+    timestamp_col = user_events.timestamp_column
+    user_id = user_events.user_id_column
+    unique_counts = data[[timestamp_col, event_type_str, user_id]].drop_duplicates()
+    unique_counts = unique_counts.groupby([timestamp_col, event_type_str])[user_id].agg('count')
+    unique_counts = unique_counts.reset_index()
+    return unique_counts
 
 
+def plot_event_counts(counts_df: pd.DataFrame, event_types: List[EventType], ax: plt.Axes, period_id: str,
+                      user_id: str, title: str):
+    """
+    Plots event_counts graph on the given subplot
+    Args:
+        DataFrame with counts
+        Subplot to draw the plot on
+        Title of the plot
+    """
+    event_counts_df = pd.DataFrame()
+    for event_type in event_types:
+        event_counts_df = counts_df.loc[counts_df[event_type_str] == event_type.name]
+        x_coord = event_counts_df[period_id].values
+        y_coord = event_counts_df[user_id].values
+        ax.plot(x_coord, y_coord,
+                marker='o', label=event_type.name)
+
+        for x, y in zip(x_coord, y_coord):
+            ax.annotate(y, (x, y))  # annotates plot with value near each data point
+    x_coord = counts_df[period_id].unique()
+    ax.set_xticks(x_coord)
+    plt.setp(ax.xaxis.get_majorticklabels(), rotation=20)
+    ax.set_ylabel(title)
+    ax.set_title(title)
+    ax.xaxis.set_tick_params(labelsize=18)
+    ax.legend()
 
 
-def calculate_total_events_and_unique_users(period_start_date, period_end_date, events_in_question):
-    event_counts_by_date_df = pd.DataFrame()    
-    events_df = all_user_events_df.loc[period_start_date:period_end_date]
-    for event_id, event in events_in_question.items():
-        event_df = events_df.loc[(events_df[list(event)] == pd.Series(event)).all(axis = 1)]
-        delta = datetime.strptime(period_end_date, '%Y-%m-%d') - datetime.strptime(period_start_date, '%Y-%m-%d')
-        for i in range(delta.days):
-                day = datetime.strptime(period_start_date, '%Y-%m-%d') + timedelta(days=i)
-                day_events = event_df.loc[str(day.date())]
-                day_counts_dict = {
-                'event_id':[event_id],
-                'date': [day.date()],
-                'Total':[len(day_events)],
-                'Unique users':[len(day_events['user_id'].unique())]
-                }
-                event_counts_by_date_df = event_counts_by_date_df.append(pd.DataFrame(day_counts_dict)) 
-    return event_counts_by_date_df
-            
-def plot_event_counts(event_counts_by_date_df, total_or_unique): 
-    fig = plt.figure()
-    ax = plt.axes()
-    
-    
-    for event_id in event_counts_by_date_df['event_id'].unique():
-        event_counts_df = event_counts_by_date_df.loc[event_counts_by_date_df['event_id']==event_id]
-        ax.xaxis_date()
-        ax.plot(event_counts_df['date'].values, event_counts_df[total_or_unique].values, marker = 'o', label = event_id)
-        
-    
-        
-        
-        for i,j in zip(event_counts_df['date'].values, event_counts_df[total_or_unique].values):
-            ax.annotate(j,(i,j), fontsize=15)
+if __name__ == '__main__':
 
-    plt.xticks(event_counts_by_date_df['date'].unique())
-    fig.autofmt_xdate()
-    plt.legend(loc="upper right", fontsize=15)
-    
-    plt.xticks(fontsize=15)
-    plt.yticks(fontsize=15)
-    plt.ylabel('Number of events: ' + total_or_unique, fontsize=15)
-    plt.title('Number of events: ' + total_or_unique, fontsize=15)
+
+    events = uev.UserEvents.init_from_files(events_metadata_path='../data/events_metadata.json',
+                                            periods_metadata_path='../data/periods_metadata.json')
+    # Prepare data, set timestamp as index, keep only date in original timestamp column
+    events.data[events.timestamp_column] = pd.to_datetime(events.data[events.timestamp_column])
+    events.data.set_index(events.timestamp_column, inplace=True, drop=False)
+    del events.data.index.name
+    events.data[events.timestamp_column] = events.data[events.timestamp_column].apply(lambda x: datetime.date(x))
+
+    # filter data by start/end dates and event types in question
+    config_path = '../event_counts/event_counts_config.json'
+    with open(os.path.abspath(config_path), 'r') as f:
+        config = json.load(f)
+    config_events = config['events']
+    period_start_date = config['start_date']
+    period_end_date = config['end_date']
+    events.data = events.data.loc[period_start_date:period_end_date]
+
+    event_types = et.load_event_types_from_json(config_events)
+    if len(event_types) > 0:
+        events.filter_by_event_type(event_types, add_event_type_name=True)
+
+    total_df = counts_daily(events, event_types)
+    unique_df = uniques_daily(events, event_types)
+
+    # plot daily counts
+    register_matplotlib_converters()
+    plt.rcParams.update({'font.size': 22})
+
+    fig, axs = plt.subplots(2)
+    plot_event_counts(total_df, event_types, axs[0], events.timestamp_column, events.user_id_column,
+                      'Total number of events.')
+
+    plot_event_counts(unique_df, event_types, axs[1], events.timestamp_column, events.user_id_column,
+                      'Total number of unique users.')
+
     plt.show()
-
-
-
-events_in_question = {
-        'Task Started':
-            {
-            'action_type':'started'
-            },
-        'Task Ended':
-            {
-            'action_type':'done'            
-            },
-        'Task Skipped':
-            {
-            'action_type':'skipped'            
-            }
-            }
-
-
-period_start_date = '2019-09-16'
-period_end_date = '2019-10-14'
-
-
-
-
-event_counts_by_date_df = calculate_total_events_and_unique_users(period_start_date, period_end_date, events_in_question )
-plot_event_counts(event_counts_by_date_df, 'Total') 
-plot_event_counts(event_counts_by_date_df, 'Unique users')
-#

@@ -1,85 +1,87 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 31 05:59:50 2019
+import json
+import os
+from typing import List
 
-@author: bibam
-"""
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
-import matplotlib 
 import matplotlib.pyplot as plt
-import matplotlib.lines as mlines
-
-#time_period_in_question = 22
-
-all_user_events_df = pd.read_csv('..\\data\\user_events_df.csv')
-all_user_events_df['date'] = all_user_events_df['date'].astype(str).str[:-6] # remove timestamp
-all_user_events_df['date'] = pd.to_datetime(all_user_events_df['date'])
-all_user_events_df.set_index('date', inplace = True)
-
-"""get time periods"""
-time_periods_df = pd.read_csv('..\\data\\time_periods_df.csv', index_col = 0)
-#time_periods_df = time_periods_df[25:]
+import user_events as uev
+from user_events import UserEvents
+import event_type as et
 
 
-all_users = all_user_events_df['user_id'].unique()
+def retention_by_period(events: UserEvents):
+    """
+    Args:
+        events - UserEvents instance with user events data and metadata
+    Returns:
+          retention_list - for each user contains list of periods where user participated. Each period in the list
+                           reduced to minimum period
+    """
+    grouped = events.data.groupby(events.user_id_column)[events.period_id_column].apply(np.array)
+    grouped = grouped.dropna()
+    grouped = grouped.apply(lambda x: x - np.amin(x))
+
+    retention_list = []
+    for periods_list in grouped:
+        retention_list.extend(periods_list)
+    return retention_list
 
 
-users_by_period_dict = {}
-for index, row in time_periods_df.iterrows():
-    end_date = datetime.strptime(row.end_date, '%Y-%m-%d') - timedelta(days=1)
-    end_date = str(end_date)[:10]
-    users = all_user_events_df[row.start_date:end_date]['user_id'].unique()
-    users_by_period_dict[row.time_period_id] = users
-    
+def plot_retention_by_period(retention_data: List):
+    periods_label = 'Retention Period'
+    retention_label = 'Retention %'
+    users_num_label = 'Number of users'
+    unique, counts = np.unique(retention_data, return_counts=True)
+
+    retention_graph = pd.DataFrame(
+            {periods_label: unique,
+             users_num_label: counts,
+             retention_label: counts/counts.max()
+             })
+
+    retention_graph = retention_graph.sort_index().copy()
+
+    print(retention_graph)
+
+    retention_graph.plot(kind='line', x=periods_label, y=retention_label, figsize=(15, 10), marker='o')
+    plt.title('Retention by time period', fontsize=35)
+
+    plt.rcParams.update({'font.size': 25})
+    plt.ylim([0, 1])
+    plt.xlim([0, retention_graph[retention_label].max()])
+    plt.xticks(np.arange(0, retention_graph[periods_label].max()+1), fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.grid()
+
+    for index, row in retention_graph.iterrows():
+        plt.text(row[periods_label], row[retention_label], round(row[retention_label]*100, 2), fontsize=25)
 
 
-periods_by_user_dict = {}
-for period, users in users_by_period_dict.items():
-    for user in users:
-        if user not in periods_by_user_dict.keys():  periods_by_user_dict[user] = np.asarray([period])
-        else: periods_by_user_dict[user] = np.append(periods_by_user_dict[user], period)
+if __name__ == '__main__':
+    events = uev.UserEvents.init_from_files(events_metadata_path='../data/events_metadata.json',
+                                            periods_metadata_path='../data/periods_metadata.json')
+    events.add_period_to_data()
 
-retention_dict = {}
+    config_path = '../retention/retention_config.json'
+    with open(os.path.abspath(config_path), 'r') as f:
+        config = json.load(f)
+    config_events = config['events']
 
-retention_list = np.array([])
+    # filter by event types from config
+    event_types = et.load_event_types_from_json(config_events)
+    if len(event_types) > 0:
+        events.filter_by_event_type(event_types, add_event_type_name=True)
 
-for user in periods_by_user_dict.keys():
-    retention_list = np.append(retention_list, periods_by_user_dict[user] - periods_by_user_dict[user][0])
+    events.data = events.data[[events.user_id_column, events.period_id_column]]
+    events.data.drop_duplicates(inplace=True)
 
+    events.data.set_index(events.user_id_column, inplace=True)
 
+    retention = retention_by_period(events)
+    plot_retention_by_period(retention)
 
-unique, counts = np.unique(retention_list, return_counts=True)
-
-
-retention_graph = pd.DataFrame(
-        {'retention Period': unique,
-         'Number of users':counts,
-         'Ret %': counts/counts.max()
-         })
-
-
-retention_graph=retention_graph.sort_index().copy()
-
-print(retention_graph)
+    plt.show()
 
 
-retention_graph.plot(kind = 'line',x='retention Period', y ='Ret %', figsize=(15,10), marker = 'o')
-plt.title('retention by time period', fontsize = 35)
-
-plt.rcParams.update({'font.size': 25})
-plt.ylim([0, 1])
-plt.xlim([0, retention_graph['retention Period'].max()])
-plt.xticks(np.arange(0, retention_graph['retention Period'].max()+1), fontsize=20)
-plt.yticks(fontsize=20)
-plt.grid()
-
-
-for index,row in retention_graph.iterrows():
-    plt.text(row['retention Period'], row['Ret %'], round(row['Ret %']*100,2), fontsize=25)
-
-plt.show()
-
-
-#

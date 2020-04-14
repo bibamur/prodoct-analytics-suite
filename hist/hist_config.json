@@ -1,0 +1,21 @@
+{
+  "_description": "Definitions of events to make histograms for.",
+  "start_date": "2019-09-16",
+  "end_date": "2019-10-14",
+  "events": [
+    {
+      "name": "Course Task Started",
+      "conditions": {
+        "action_type": "started",
+        "is_course": true
+      }
+    },
+    {
+      "name": "Social Task Started",
+      "conditions": {
+        "action_type": "started",
+        "is_course": false
+      }
+    }
+  ]
+}

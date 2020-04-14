@@ -1,0 +1,14 @@
+{
+  "_description": "Definitions of events to calculate retention for.",
+  "start_date": "2019-09-16",
+  "end_date": "2019-10-14",
+  "events": [
+   {
+      "name": "Social Task Started",
+      "conditions": {
+        "action_type": "started",
+        "is_course": false
+      }
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 {
   "_description": "Definitions of events to count.",
+  "start_date": "2019-09-16",
+  "end_date": "2019-10-14",
   "events": [
     {
       "name": "Course Task Started",
